@@ -117,7 +117,7 @@ jobs:
         run: |
           bunx wrangler secret bulk secrets.json
           bun run build
-          bun run deploy
+          bun run deploy -- --override-existing-dns-record
 
       - name: Purge Cloudflare CDN Cache
         run: |
