@@ -1,6 +1,6 @@
 # Fix first-publish Public Cache invalidation
 
-Status: ready-for-agent
+Status: resolved
 Source: https://github.com/du2333/flare-stack-blog/issues/125
 
 ## Problem Statement
