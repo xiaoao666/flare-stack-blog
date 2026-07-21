@@ -84,8 +84,27 @@ export function HeroCarousel({
       </div>
 
       <div className="oacia-wave" aria-hidden="true">
-        <div className="oacia-wave-layer oacia-wave-back" />
-        <div className="oacia-wave-layer oacia-wave-front" />
+        <svg
+          className="oacia-wave-svg oacia-wave-back"
+          viewBox="0 0 2400 180"
+          preserveAspectRatio="none"
+        >
+          <path d="M0 85C180 28 360 142 540 84S900 27 1080 85s360 58 540 0 360-58 540 0 180 32 240 18v77H0Z" />
+        </svg>
+        <svg
+          className="oacia-wave-svg oacia-wave-middle"
+          viewBox="0 0 2400 180"
+          preserveAspectRatio="none"
+        >
+          <path d="M0 104c220-74 400 54 620-8s386-73 600-5 390 67 600 0 402-54 580 8v81H0Z" />
+        </svg>
+        <svg
+          className="oacia-wave-svg oacia-wave-front"
+          viewBox="0 0 2400 180"
+          preserveAspectRatio="none"
+        >
+          <path d="M0 116c210-44 390 38 590-1s390-44 590 0 390 43 590 0 410-38 630 6v59H0Z" />
+        </svg>
       </div>
     </section>
   );
