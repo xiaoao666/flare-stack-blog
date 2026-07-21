@@ -57,8 +57,9 @@
 .oacia-hero-copy span { display: block; margin-top: 1.4rem; font-family: "Noto Serif SC Variable", serif; font-size: clamp(.95rem, 1.5vw, 1.2rem); letter-spacing: .08em; }
 .oacia-scroll-cue { position: absolute; z-index: 4; left: 50%; bottom: 5.6rem; display: grid; justify-items: center; gap: .5rem; transform: translateX(-50%); font-family: "JetBrains Mono Variable", monospace; font-size: .55rem; letter-spacing: .2em; }
 .oacia-scroll-cue i { width: 1px; height: 2.4rem; background: linear-gradient(white, transparent); animation: oacia-scroll 1.8s ease-in-out infinite; }
-.oacia-wave { position: absolute; z-index: 4; left: 0; right: 0; bottom: -1px; height: 9rem; overflow: hidden; pointer-events: none; }
-.oacia-wave-svg { position: absolute; left: -50%; bottom: -1px; width: 200%; height: 100%; will-change: transform; }
+.oacia-wave { position: absolute; z-index: 4; left: 0; right: 0; bottom: -4px; height: 13rem; overflow: hidden; pointer-events: none; }
+.oacia-wave::after { content: ""; position: absolute; z-index: 5; left: 0; right: 0; bottom: -1px; height: 8px; background: hsl(var(--background)); }
+.oacia-wave-svg { position: absolute; left: -50%; bottom: -3px; width: 200%; height: 100%; will-change: transform; }
 .oacia-wave-svg path { fill: hsl(var(--background)); }
 .oacia-wave-back { opacity: .36; animation: oacia-wave-back-motion 5.5s ease-in-out infinite alternate; }
 .oacia-wave-middle { opacity: .62; animation: oacia-wave-middle-motion 7s ease-in-out -1.5s infinite alternate; }
@@ -130,7 +131,7 @@
   .oacia-hero-copy { top: 45%; }
   .oacia-hero-copy h1 { font-size: clamp(3.5rem, 23vw, 6rem); }
   .oacia-hero-copy span { max-width: 16rem; font-size: .85rem; line-height: 1.8; }
-  .oacia-wave { height: 6.5rem; }
+  .oacia-wave { height: 9rem; }
   .oacia-intro,.oacia-post-section,.oacia-footer { width: min(100% - 2rem, 76rem); }
   .oacia-intro { padding-top: 5rem; }
   .oacia-post-section { margin-top: 4.5rem; }
