@@ -18,7 +18,12 @@ export function PublicLayout({
 
   return (
     <div className="oacia-theme min-h-[100dvh]">
-      <header className="oacia-header">
+      <header
+        className={cn(
+          "oacia-header",
+          location.pathname === "/" ? "is-home" : "is-inner",
+        )}
+      >
         <div className="oacia-nav-shell">
           <Link to="/" className="oacia-brand" aria-label={siteConfig.title}>
             <span>{siteConfig.title}</span>

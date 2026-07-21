@@ -21,10 +21,12 @@ export function HomePage({ posts, pinnedPosts }: HomePageProps) {
 
   return (
     <div className="oacia-home">
+      <HeroCarousel title={siteConfig.title} />
+
       <section className="oacia-intro">
         <div>
-          <p className="oacia-kicker">BLOG / NOTES / LIFE</p>
-          <h1>{siteConfig.title}</h1>
+          <p className="oacia-kicker">WELCOME TO MY LITTLE UNIVERSE</p>
+          <h2>写下喜欢的事，<br /><em>也收藏闪闪发光的日常。</em></h2>
           <p className="oacia-description">{siteConfig.description}</p>
         </div>
         <div className="oacia-socials" aria-label="社交链接">
@@ -52,8 +54,6 @@ export function HomePage({ posts, pinnedPosts }: HomePageProps) {
         </div>
       </section>
 
-      <HeroCarousel />
-
       {pinned.length > 0 && (
         <section className="oacia-post-section">
           <div className="oacia-section-heading">
@@ -61,8 +61,8 @@ export function HomePage({ posts, pinnedPosts }: HomePageProps) {
             <span>{String(pinned.length).padStart(2, "0")}</span>
           </div>
           <div>
-            {pinned.map((post) => (
-              <PostRow key={post.id} post={post} pinned />
+            {pinned.map((post, index) => (
+              <PostRow key={post.id} post={post} pinned index={index} />
             ))}
           </div>
         </section>
@@ -77,8 +77,8 @@ export function HomePage({ posts, pinnedPosts }: HomePageProps) {
           </Link>
         </div>
         <div>
-          {recent.map((post) => (
-            <PostRow key={post.id} post={post} />
+          {recent.map((post, index) => (
+            <PostRow key={post.id} post={post} index={index + pinned.length} />
           ))}
         </div>
       </section>

@@ -14,9 +14,9 @@ export function getThemePreloadImages(siteConfig: SiteConfig): Array<string> {
       ].filter((image): image is string => Boolean(image));
     case "oacia":
       return [
-        "/images/oacia/sky-day.jpg",
-        "/images/oacia/afternoon.jpg",
-        "/images/oacia/sakura.jpg",
+        "/images/oacia/hero-sky.jpg",
+        "/images/oacia/hero-sakura.jpg",
+        "/images/oacia/hero-afternoon.jpg",
       ];
     default:
       __THEME_NAME__ satisfies never;
