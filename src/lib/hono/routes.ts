@@ -4,6 +4,7 @@ import { Hono } from "hono";
 import { proxy } from "hono/proxy";
 import { exportDownloadRoute } from "@/features/import-export/api/hono/download.route";
 import { handleImageRequest } from "@/features/media/service/media.service";
+import mobileRoute from "@/features/mobile/api/hono/mobile.route";
 import postsDetailRoute from "@/features/posts/api/hono/posts.detail.route";
 import postsListRoute from "@/features/posts/api/hono/posts.list.route";
 import postsRelatedRoute from "@/features/posts/api/hono/posts.related.route";
@@ -100,6 +101,24 @@ const protectedAuthPaths = [
   "/api/auth/request-password-reset",
   "/api/auth/send-verification-email",
 ] as const;
+
+app.post(
+  "/api/mobile/auth/login",
+  baseMiddleware,
+  rateLimitMiddleware({
+    capacity: 5,
+    interval: "1m",
+    identifier: createRateLimiterIdentifier,
+  }),
+  async (c) => {
+    const url = new URL(c.req.url);
+    url.pathname = "/api/auth/sign-in/email";
+    const request = new Request(url, c.req.raw);
+    return c.get("auth").handler(request);
+  },
+);
+
+app.route("/api/mobile", mobileRoute);
 
 protectedAuthPaths.forEach((path) => {
   app.post(
