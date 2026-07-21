@@ -137,6 +137,18 @@ app.delete("/comments/:id", async (c) => {
     : c.json(deleted.data);
 });
 
+app.get("/my/comments", async (c) => {
+  const session = await c
+    .get("auth")
+    .api.getSession({ headers: c.req.raw.headers });
+  if (!session) return c.json({ error: "UNAUTHORIZED" }, 401);
+  const items = await CommentService.getMyComments(
+    { ...serviceContext(c), auth: c.get("auth"), session },
+    { offset: 0, limit: 20 },
+  );
+  return c.json({ items });
+});
+
 app.get("/admin/session", async (c) => {
   const result = await requireAdmin(c);
   if ("response" in result) return result.response;
