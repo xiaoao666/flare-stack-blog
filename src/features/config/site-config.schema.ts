@@ -17,6 +17,7 @@ export const DEFAULT_THEME_TRANSITION_MIN = 0;
 export const DEFAULT_THEME_TRANSITION_MAX = 1500;
 export const FUWARI_THEME_HUE_MIN = 0;
 export const FUWARI_THEME_HUE_MAX = 360;
+export const SITE_THEME_NAMES = ["default", "fuwari", "oacia"] as const;
 
 function createSiteTextSchema(max: number) {
   return z.string().trim().max(max);
@@ -270,6 +271,32 @@ function createFuwariThemeSiteConfigInputFormSchema(messages: Messages) {
   });
 }
 
+function createOaciaThemeSiteConfigSchema() {
+  return z.object({
+    carouselImages: z.array(createBackgroundImageRefSchema()).min(1).max(5),
+  });
+}
+
+function createOaciaThemeSiteConfigInputSchema() {
+  return z.object({
+    carouselImages: z
+      .array(createBackgroundImageRefSchema())
+      .min(1)
+      .max(5)
+      .optional(),
+  });
+}
+
+function createOaciaThemeSiteConfigInputFormSchema(messages: Messages) {
+  return z.object({
+    carouselImages: z
+      .array(createBackgroundImageRefFormSchema(messages))
+      .min(1)
+      .max(5)
+      .optional(),
+  });
+}
+
 export const defaultThemeBackgroundSchema =
   createDefaultThemeBackgroundSchema();
 export const defaultThemeBackgroundInputSchema =
@@ -281,8 +308,12 @@ export const defaultThemeSiteConfigInputSchema =
 export const fuwariThemeSiteConfigSchema = createFuwariThemeSiteConfigSchema();
 export const fuwariThemeSiteConfigInputSchema =
   createFuwariThemeSiteConfigInputSchema();
+export const oaciaThemeSiteConfigSchema = createOaciaThemeSiteConfigSchema();
+export const oaciaThemeSiteConfigInputSchema =
+  createOaciaThemeSiteConfigInputSchema();
 
 export const FullSiteConfigSchema = z.object({
+  activeTheme: z.enum(SITE_THEME_NAMES),
   title: createSiteTextSchema(120),
   author: createSiteTextSchema(80),
   description: createSiteTextSchema(300),
@@ -298,11 +329,13 @@ export const FullSiteConfigSchema = z.object({
   theme: z.object({
     default: defaultThemeSiteConfigSchema,
     fuwari: fuwariThemeSiteConfigSchema,
+    oacia: oaciaThemeSiteConfigSchema,
   }),
 });
 
 export function createSiteConfigInputFormSchema(messages: Messages) {
   return z.object({
+    activeTheme: z.enum(SITE_THEME_NAMES).optional(),
     title: createSiteTextFormSchema(120, messages).optional(),
     author: createSiteTextFormSchema(80, messages).optional(),
     description: createSiteTextFormSchema(300, messages).optional(),
@@ -322,12 +355,14 @@ export function createSiteConfigInputFormSchema(messages: Messages) {
         default:
           createDefaultThemeSiteConfigInputFormSchema(messages).optional(),
         fuwari: createFuwariThemeSiteConfigInputFormSchema(messages).optional(),
+        oacia: createOaciaThemeSiteConfigInputFormSchema(messages).optional(),
       })
       .optional(),
   });
 }
 
 export const SiteConfigInputSchema = z.object({
+  activeTheme: z.enum(SITE_THEME_NAMES).optional(),
   title: createSiteTextSchema(120).optional(),
   author: createSiteTextSchema(80).optional(),
   description: createSiteTextSchema(300).optional(),
@@ -346,6 +381,7 @@ export const SiteConfigInputSchema = z.object({
     .object({
       default: defaultThemeSiteConfigInputSchema.optional(),
       fuwari: fuwariThemeSiteConfigInputSchema.optional(),
+      oacia: oaciaThemeSiteConfigInputSchema.optional(),
     })
     .optional(),
 });

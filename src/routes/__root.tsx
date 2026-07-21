@@ -7,7 +7,7 @@ import {
   useRouteContext,
 } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
-import theme from "@theme";
+import theme from "@/features/theme/runtime";
 import { ThemeProvider } from "@/components/common/theme-provider";
 import { siteConfigQuery } from "@/features/config/queries";
 import TanStackQueryDevtools from "@/integrations/tanstack-query/devtools";

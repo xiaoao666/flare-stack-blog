@@ -21,7 +21,10 @@ export function HomePage({ posts, pinnedPosts }: HomePageProps) {
 
   return (
     <div className="oacia-home">
-      <HeroCarousel title={siteConfig.title} />
+      <HeroCarousel
+        title={siteConfig.title}
+        images={siteConfig.theme.oacia.carouselImages}
+      />
 
       <section className="oacia-intro">
         <div>

@@ -1,6 +1,6 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, notFound } from "@tanstack/react-router";
-import theme from "@theme";
+import theme from "@/features/theme/runtime";
 import { useEffect } from "react";
 import { z } from "zod";
 import { siteConfigQuery, siteDomainQuery } from "@/features/config/queries";

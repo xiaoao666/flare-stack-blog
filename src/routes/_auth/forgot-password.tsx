@@ -1,5 +1,5 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
-import theme from "@theme";
+import theme from "@/features/theme/runtime";
 import { Turnstile, useTurnstile } from "@/components/common/turnstile";
 import { useForgotPasswordForm } from "@/features/auth/hooks";
 import { m } from "@/paraglide/messages";

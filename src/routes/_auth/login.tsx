@@ -3,7 +3,7 @@ import {
   useLocation,
   useRouteContext,
 } from "@tanstack/react-router";
-import theme from "@theme";
+import theme from "@/features/theme/runtime";
 import { z } from "zod";
 import { Turnstile, useTurnstile } from "@/components/common/turnstile";
 import { useLoginForm, useSocialLogin } from "@/features/auth/hooks";

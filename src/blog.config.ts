@@ -1,6 +1,7 @@
 import type { SiteConfig } from "@/features/config/site-config.schema";
 
 export const blogConfig = {
+  activeTheme: "oacia",
   title: "站点名称",
   author: "作者",
   description:
@@ -26,6 +27,13 @@ export const blogConfig = {
       homeBg: "/images/home-bg.webp",
       avatar: "/images/avatar.png",
       primaryHue: 250,
+    },
+    oacia: {
+      carouselImages: [
+        "/images/oacia/hero-sky.jpg",
+        "/images/oacia/hero-sakura.jpg",
+        "/images/oacia/hero-afternoon.jpg",
+      ],
     },
   },
 } as const satisfies SiteConfig;

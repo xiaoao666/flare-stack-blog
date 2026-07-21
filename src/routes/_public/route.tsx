@@ -1,6 +1,6 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, Outlet, useNavigate } from "@tanstack/react-router";
-import theme from "@theme";
+import theme from "@/features/theme/runtime";
 import { useEffect } from "react";
 import { toast } from "sonner";
 import { AUTH_KEYS } from "@/features/auth/queries";

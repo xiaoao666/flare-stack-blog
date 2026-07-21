@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import theme from "@theme";
+import theme from "@/features/theme/runtime";
 import { userHasPasswordFn } from "@/features/auth/api/auth.api";
 import {
   useLogout,

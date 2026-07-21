@@ -1,7 +1,7 @@
 @import "../../default/styles/index.css";
 
 @layer base {
-  :root {
+  .oacia-theme {
     --background: 340 35% 99%; --foreground: 331 18% 19%;
     --muted: 336 35% 96%; --muted-foreground: 330 9% 47%;
     --popover: 0 0% 100%; --popover-foreground: 331 18% 19%;
@@ -11,7 +11,7 @@
     --accent: 337 72% 94%; --accent-foreground: 337 58% 43%;
     --ring: 337 89% 70%; --selection: 337 89% 70%; --selection-foreground: 0 0% 100%;
   }
-  .dark {
+  .dark .oacia-theme {
     --background: 330 16% 8%; --foreground: 335 28% 94%;
     --muted: 330 13% 14%; --muted-foreground: 332 12% 65%;
     --popover: 330 16% 10%; --popover-foreground: 335 28% 94%;
@@ -21,7 +21,7 @@
     --accent: 337 27% 20%; --accent-foreground: 337 84% 78%;
     --ring: 337 84% 72%; --selection: 337 84% 72%; --selection-foreground: 330 16% 8%;
   }
-  body { background: hsl(var(--background)); }
+  .oacia-theme { background: hsl(var(--background)); }
 }
 
 .oacia-theme { color: hsl(var(--foreground)); font-family: "Noto Sans SC Variable", sans-serif; overflow-x: clip; }
@@ -55,18 +55,11 @@
 .oacia-hero-copy p { margin-bottom: 1rem; font-family: "JetBrains Mono Variable", monospace; font-size: .68rem; font-weight: 600; letter-spacing: .22em; opacity: .84; }
 .oacia-hero-copy h1 { font-family: "Noto Serif SC Variable", serif; font-size: clamp(4.2rem, 10vw, 9.5rem); font-weight: 800; line-height: .92; letter-spacing: -.075em; color: #ff82b0; -webkit-text-stroke: 1px rgb(255 255 255 / .65); text-shadow: 0 5px 0 rgb(255 255 255 / .42), 0 18px 52px rgb(83 31 66 / .28); }
 .oacia-hero-copy span { display: block; margin-top: 1.4rem; font-family: "Noto Serif SC Variable", serif; font-size: clamp(.95rem, 1.5vw, 1.2rem); letter-spacing: .08em; }
-.oacia-carousel-controls { position: absolute; right: max(1.5rem, calc((100vw - 86rem)/2)); bottom: 5.8rem; z-index: 5; display: flex; align-items: center; gap: .25rem; }
-.oacia-carousel-controls>button { width: 2.4rem; height: 2.4rem; display: grid; place-items: center; border-radius: 999px; background: rgb(39 24 38 / .26); border: 1px solid rgb(255 255 255 / .35); backdrop-filter: blur(10px); transition: background .2s, transform .15s; }
-.oacia-carousel-controls>button:hover { background: rgb(255 130 176 / .7); }
-.oacia-carousel-controls>button:active { transform: scale(.93); }
-.oacia-carousel-dots { display: flex; gap: .42rem; padding: .6rem .7rem; }
-.oacia-carousel-dot { width: 1.7rem; height: 3px; border-radius: 9px; background: rgb(255 255 255 / .45); transition: width .3s, background .3s; }
-.oacia-carousel-dot.is-active { width: 3.5rem; background: #ff90b8; box-shadow: 0 0 12px rgb(255 144 184 / .65); }
 .oacia-scroll-cue { position: absolute; z-index: 4; left: 50%; bottom: 5.6rem; display: grid; justify-items: center; gap: .5rem; transform: translateX(-50%); font-family: "JetBrains Mono Variable", monospace; font-size: .55rem; letter-spacing: .2em; }
 .oacia-scroll-cue i { width: 1px; height: 2.4rem; background: linear-gradient(white, transparent); animation: oacia-scroll 1.8s ease-in-out infinite; }
-.oacia-wave { position: absolute; z-index: 4; left: 0; right: 0; bottom: -1px; height: 6rem; overflow: hidden; pointer-events: none; }
-.oacia-wave-layer { position: absolute; left: -10%; bottom: -4rem; width: 120%; height: 8rem; border-radius: 48% 52% 0 0 / 55% 48% 0 0; background: hsl(var(--background)); transform-origin: center bottom; }
-.oacia-wave-back { bottom: -3.2rem; opacity: .52; animation: oacia-wave-back 9s ease-in-out infinite alternate; }
+.oacia-wave { position: absolute; z-index: 4; left: 0; right: 0; bottom: -1px; height: 8rem; overflow: hidden; pointer-events: none; }
+.oacia-wave-layer { position: absolute; left: -10%; bottom: -3.5rem; width: 120%; height: 9rem; border-radius: 44% 56% 0 0 / 64% 56% 0 0; background: hsl(var(--background)); transform-origin: center bottom; }
+.oacia-wave-back { bottom: -2.6rem; opacity: .5; animation: oacia-wave-back 9s ease-in-out infinite alternate; }
 .oacia-wave-front { animation: oacia-wave-front 7s ease-in-out infinite alternate; }
 
 .oacia-intro { width: min(100% - 3rem, 76rem); margin: 0 auto; padding: 7.5rem 0 2rem; display: grid; grid-template-columns: minmax(0,1fr) auto; align-items: end; gap: 5rem; }
@@ -125,8 +118,6 @@
   .oacia-hero-copy { top: 45%; }
   .oacia-hero-copy h1 { font-size: clamp(3.5rem, 23vw, 6rem); }
   .oacia-hero-copy span { max-width: 16rem; font-size: .85rem; line-height: 1.8; }
-  .oacia-carousel-controls { right: 1rem; bottom: 4.2rem; }
-  .oacia-carousel-controls>button:first-child,.oacia-carousel-controls>button:last-child { display: none; }
   .oacia-wave { height: 4.5rem; }
   .oacia-intro,.oacia-post-section,.oacia-footer { width: min(100% - 2rem, 76rem); }
   .oacia-intro { padding-top: 5rem; }

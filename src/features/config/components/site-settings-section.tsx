@@ -6,19 +6,20 @@ import { Field } from "@/features/config/components/site-settings-fields";
 import { SocialLinksEditor } from "@/features/config/components/social-links-editor";
 import { DefaultThemeSettings } from "@/features/config/components/themes/default-theme-settings";
 import { FuwariThemeSettings } from "@/features/config/components/themes/fuwari-theme-settings";
+import { OaciaThemeSettings } from "@/features/config/components/themes/oacia-theme-settings";
 import type { SystemConfig } from "@/features/config/config.schema";
 import { m } from "@/paraglide/messages";
 
-function ThemeSettingsContent() {
-  switch (__THEME_NAME__) {
+function ThemeSettingsContent({ theme }: { theme: "default" | "fuwari" | "oacia" }) {
+  switch (theme) {
     case "default":
       return <DefaultThemeSettings />;
     case "fuwari":
       return <FuwariThemeSettings />;
     case "oacia":
-      return null;
+      return <OaciaThemeSettings />;
     default: {
-      __THEME_NAME__ satisfies never;
+      theme satisfies never;
       return null;
     }
   }
@@ -47,8 +48,10 @@ function SectionShell({
 export function SiteSettingsSection() {
   const {
     register,
+    watch,
     formState: { errors },
   } = useFormContext<SystemConfig>();
+  const activeTheme = watch("site.activeTheme") ?? __THEME_NAME__;
 
   const getInputClassName = (error?: string) =>
     error ? "border-destructive focus-visible:border-destructive" : undefined;
@@ -159,10 +162,22 @@ export function SiteSettingsSection() {
       <SectionShell
         title={m.settings_site_section_theme_title()}
         description={m.settings_site_section_theme_desc({
-          theme: __THEME_NAME__,
+          theme: activeTheme,
         })}
       >
-        <ThemeSettingsContent />
+        <Field label="当前主题" hint="保存后刷新前台即可生效">
+          <select
+            {...register("site.activeTheme")}
+            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+          >
+            <option value="oacia">Oacia</option>
+            <option value="default">Default</option>
+            <option value="fuwari">Fuwari</option>
+          </select>
+        </Field>
+        <div className="md:col-span-2">
+          <ThemeSettingsContent theme={activeTheme} />
+        </div>
       </SectionShell>
     </div>
   );

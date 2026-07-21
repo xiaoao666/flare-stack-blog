@@ -2,7 +2,7 @@ import type { SiteConfig } from "@/features/config/site-config.schema";
 
 // if the theme doesn't have a preload image, return an empty array
 export function getThemePreloadImages(siteConfig: SiteConfig): Array<string> {
-  switch (__THEME_NAME__) {
+  switch (siteConfig.activeTheme) {
     case "fuwari":
       return siteConfig.theme.fuwari.homeBg
         ? [siteConfig.theme.fuwari.homeBg]
@@ -13,13 +13,9 @@ export function getThemePreloadImages(siteConfig: SiteConfig): Array<string> {
         siteConfig.theme.default.background?.globalImage,
       ].filter((image): image is string => Boolean(image));
     case "oacia":
-      return [
-        "/images/oacia/hero-sky.jpg",
-        "/images/oacia/hero-sakura.jpg",
-        "/images/oacia/hero-afternoon.jpg",
-      ];
+      return siteConfig.theme.oacia.carouselImages;
     default:
-      __THEME_NAME__ satisfies never;
+      siteConfig.activeTheme satisfies never;
       return [];
   }
 }

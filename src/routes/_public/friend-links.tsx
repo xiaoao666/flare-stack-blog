@@ -1,6 +1,6 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import theme from "@theme";
+import theme from "@/features/theme/runtime";
 import { approvedFriendLinksQuery } from "@/features/friend-links/queries";
 import { m } from "@/paraglide/messages";
 
@@ -25,8 +25,12 @@ export const Route = createFileRoute("/_public/friend-links")({
       },
     ],
   }),
-  pendingComponent: theme.FriendLinksPageSkeleton,
+  pendingComponent: FriendLinksPageSkeleton,
 });
+
+function FriendLinksPageSkeleton() {
+  return <theme.FriendLinksPageSkeleton />;
+}
 
 function FriendLinksPage() {
   const { data: links } = useSuspenseQuery(approvedFriendLinksQuery());

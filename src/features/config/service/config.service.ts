@@ -87,6 +87,7 @@ export function resolveSiteConfig(
   const configDefaultBackground = config?.site?.theme?.default?.background;
 
   return FullSiteConfigSchema.parse({
+    activeTheme: config?.site?.activeTheme ?? __THEME_NAME__,
     title: config?.site?.title ?? blogConfig.title,
     author: config?.site?.author ?? blogConfig.author,
     description: config?.site?.description ?? blogConfig.description,
@@ -131,6 +132,13 @@ export function resolveSiteConfig(
         primaryHue:
           config?.site?.theme?.fuwari?.primaryHue ??
           blogConfig.theme.fuwari.primaryHue,
+      },
+      oacia: {
+        carouselImages: config?.site?.theme?.oacia?.carouselImages ?? [
+          "/images/oacia/hero-sky.jpg",
+          "/images/oacia/hero-sakura.jpg",
+          "/images/oacia/hero-afternoon.jpg",
+        ],
       },
     },
   });
