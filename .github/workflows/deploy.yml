@@ -128,8 +128,9 @@ jobs:
         run: |
           PURGE_DOMAIN=${CDN_DOMAIN:-$DOMAIN}
           echo "Purging CDN cache for $PURGE_DOMAIN"
-          curl -s -X POST "https://api.cloudflare.com/client/v4/zones/$CLOUDFLARE_ZONE_ID/purge_cache" \
+          PURGE_RESPONSE=$(curl --fail-with-body -sS -X POST "https://api.cloudflare.com/client/v4/zones/$CLOUDFLARE_ZONE_ID/purge_cache" \
             -H "Authorization: Bearer $CLOUDFLARE_PURGE_API_TOKEN" \
             -H "Content-Type: application/json" \
-            --data '{"prefixes":["'$PURGE_DOMAIN'"]}'
-          echo ""
+            --data '{"prefixes":["'$PURGE_DOMAIN'"]}')
+          echo "$PURGE_RESPONSE"
+          echo "$PURGE_RESPONSE" | grep -q '"success":true'
