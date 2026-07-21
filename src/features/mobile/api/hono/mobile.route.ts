@@ -1,6 +1,7 @@
 import type { JSONContent } from "@tiptap/react";
 import type { Context } from "hono";
 import { Hono } from "hono";
+import * as CommentService from "@/features/comments/comments.service";
 import * as ConfigService from "@/features/config/service/config.service";
 import * as FriendLinkService from "@/features/friend-links/friend-links.service";
 import * as PostService from "@/features/posts/services/posts.service";
@@ -41,6 +42,101 @@ app.get("/session", async (c) => {
   return c.json({ user: session?.user ?? null });
 });
 
+app.get("/auth/connect", async (c) => {
+  const session = await c
+    .get("auth")
+    .api.getSession({ headers: c.req.raw.headers });
+  if (!session) {
+    const redirectTo = encodeURIComponent("/api/mobile/auth/connect");
+    return c.redirect(`/login?redirectTo=${redirectTo}`);
+  }
+  const cookie = c.req.header("cookie");
+  if (!cookie) return c.json({ error: "SESSION_COOKIE_MISSING" }, 401);
+  const code = crypto.randomUUID();
+  await c.env.KV.put(
+    `mobile-auth:${code}`,
+    JSON.stringify({ cookie, userId: session.user.id }),
+    { expirationTtl: 300 },
+  );
+  return c.redirect(`xiaoaoblog://auth?code=${encodeURIComponent(code)}`);
+});
+
+app.post("/auth/exchange", async (c) => {
+  const { code } = await c.req.json<{ code?: string }>();
+  if (!code) return c.json({ error: "CODE_REQUIRED" }, 400);
+  const key = `mobile-auth:${code}`;
+  const value = await c.env.KV.get(key);
+  if (!value) return c.json({ error: "CODE_INVALID_OR_EXPIRED" }, 401);
+  await c.env.KV.delete(key);
+  const payload = JSON.parse(value) as { cookie: string };
+  return c.json({ cookie: payload.cookie });
+});
+
+app.get("/posts/:postId/comments", async (c) => {
+  const session = await c
+    .get("auth")
+    .api.getSession({ headers: c.req.raw.headers });
+  const data = await CommentService.getRootCommentsByPostId(serviceContext(c), {
+    postId: Number(c.req.param("postId")),
+    offset: Number(c.req.query("offset") ?? 0),
+    limit: Math.min(Number(c.req.query("limit") ?? 50), 100),
+    viewerId: session?.user.id,
+  });
+  return c.json(data);
+});
+
+app.get("/posts/:postId/comments/:rootId/replies", async (c) => {
+  const session = await c
+    .get("auth")
+    .api.getSession({ headers: c.req.raw.headers });
+  const data = await CommentService.getRepliesByRootId(serviceContext(c), {
+    postId: Number(c.req.param("postId")),
+    rootId: Number(c.req.param("rootId")),
+    offset: 0,
+    limit: 100,
+    viewerId: session?.user.id,
+  });
+  return c.json(data);
+});
+
+app.post("/posts/:postId/comments", async (c) => {
+  const session = await c
+    .get("auth")
+    .api.getSession({ headers: c.req.raw.headers });
+  if (!session) return c.json({ error: "UNAUTHORIZED" }, 401);
+  const body = await c.req.json<{
+    content: unknown;
+    rootId?: number;
+    replyToCommentId?: number;
+  }>();
+  const created = await CommentService.createComment(
+    { ...serviceContext(c), auth: c.get("auth"), session },
+    {
+      postId: Number(c.req.param("postId")),
+      content: body.content as JSONContent,
+      rootId: body.rootId,
+      replyToCommentId: body.replyToCommentId,
+    },
+  );
+  return created.error
+    ? c.json({ error: created.error.reason }, 400)
+    : c.json(created.data, 201);
+});
+
+app.delete("/comments/:id", async (c) => {
+  const session = await c
+    .get("auth")
+    .api.getSession({ headers: c.req.raw.headers });
+  if (!session) return c.json({ error: "UNAUTHORIZED" }, 401);
+  const deleted = await CommentService.deleteComment(
+    { ...serviceContext(c), auth: c.get("auth"), session },
+    { id: Number(c.req.param("id")) },
+  );
+  return deleted.error
+    ? c.json({ error: deleted.error.reason }, 403)
+    : c.json(deleted.data);
+});
+
 app.get("/admin/session", async (c) => {
   const result = await requireAdmin(c);
   if ("response" in result) return result.response;
@@ -58,6 +154,34 @@ app.get("/admin/posts", async (c) => {
     sortDir: "DESC",
   });
   return c.json({ items: posts });
+});
+
+app.get("/admin/comments", async (c) => {
+  const result = await requireAdmin(c);
+  if ("response" in result) return result.response;
+  return c.json(
+    await CommentService.getAllComments(serviceContext(c), {
+      offset: 0,
+      limit: 100,
+      status: c.req.query("status") as never,
+    }),
+  );
+});
+
+app.post("/admin/comments/:id/moderate", async (c) => {
+  const result = await requireAdmin(c);
+  if ("response" in result) return result.response;
+  const body = await c.req.json<{
+    status: "published" | "deleted" | "pending";
+  }>();
+  const moderated = await CommentService.moderateComment(
+    serviceContext(c),
+    { id: Number(c.req.param("id")), status: body.status },
+    result.session.user.id,
+  );
+  return moderated.error
+    ? c.json({ error: moderated.error.reason }, 404)
+    : c.json(moderated.data);
 });
 
 app.get("/admin/posts/:id", async (c) => {
