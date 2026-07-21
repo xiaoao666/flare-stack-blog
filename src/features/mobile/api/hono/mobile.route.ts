@@ -34,6 +34,13 @@ app.get("/site", async (c) => {
   return c.json({ site, friendLinks });
 });
 
+app.get("/session", async (c) => {
+  const session = await c
+    .get("auth")
+    .api.getSession({ headers: c.req.raw.headers });
+  return c.json({ user: session?.user ?? null });
+});
+
 app.get("/admin/session", async (c) => {
   const result = await requireAdmin(c);
   if ("response" in result) return result.response;
