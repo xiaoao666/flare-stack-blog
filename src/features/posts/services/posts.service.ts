@@ -28,7 +28,6 @@ import { logPostAutoSnapshot } from "@/features/posts/services/post-auto-snapsho
 import * as PostAutoSnapshotService from "@/features/posts/services/post-auto-snapshot.service";
 import {
   convertToPlainText,
-  highlightCodeBlocks,
   slugify,
 } from "@/features/posts/utils/content";
 import { isFuturePublishDate } from "@/features/posts/utils/date";
@@ -100,19 +99,11 @@ export async function findPostBySlug(
     });
     if (!post) return null;
 
-    let contentJson = post.publicContentJson ?? post.contentJson;
-    // Backward-compatible fallback for posts that haven't been reprocessed yet.
-    // New publishes should read pre-highlighted content from `publicContentJson`.
-    if (!post.publicContentJson && contentJson) {
-      contentJson = await highlightCodeBlocks(contentJson);
-      context.executionCtx.waitUntil(
-        PostRepo.updatePublicContentSnapshot(
-          context.db,
-          post.id,
-          contentJson,
-        ).then(() => undefined),
-      );
-    }
+    // Highlighting a large post on the read path can exceed the Workers CPU
+    // budget. Publishing workflows build `publicContentJson`; until that async
+    // snapshot is ready, render the raw document and let CodeBlock use its
+    // escaped fallback instead of blocking the public request on Shiki.
+    const contentJson = post.publicContentJson ?? post.contentJson;
 
     return {
       ...stripPublicContentJson(post),
