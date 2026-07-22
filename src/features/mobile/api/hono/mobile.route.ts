@@ -214,9 +214,7 @@ app.get("/admin/media", async (c) => {
   const result = await requireAdmin(c);
   if ("response" in result) return result.response;
   const items = await MediaService.getMediaList(serviceContext(c), {
-    cursor: c.req.query("cursor")
-      ? Number(c.req.query("cursor"))
-      : undefined,
+    cursor: c.req.query("cursor") ? Number(c.req.query("cursor")) : undefined,
     limit: Math.min(Number(c.req.query("limit") ?? 50), 100),
     search: c.req.query("search"),
   });
