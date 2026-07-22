@@ -620,6 +620,8 @@
   "editor_title_placeholder": "在此输入文章标题...",
   "editor_meta_status": "状态",
   "editor_meta_published_at": "发布时间",
+  "editor_meta_set_today": "设为今天",
+  "editor_meta_clear_date": "清除日期",
   "editor_meta_read_time": "阅读时长",
   "editor_meta_minutes": "分钟",
   "editor_meta_slug": "链接 slug",

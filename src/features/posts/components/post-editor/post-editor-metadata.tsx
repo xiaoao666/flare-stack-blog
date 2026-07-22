@@ -123,6 +123,30 @@ export function PostEditorMetadata({
               }
               className="h-auto! border-none! bg-transparent! p-0! text-xs text-foreground font-mono"
             />
+            <div className="mt-2 flex items-center gap-3 text-[9px] uppercase tracking-wider text-muted-foreground">
+              <button
+                type="button"
+                onClick={() =>
+                  onPostChange({
+                    publishedAt: new Date(
+                      `${toLocalDateString(new Date())}T12:00:00Z`,
+                    ),
+                  })
+                }
+                className="transition-colors hover:text-foreground"
+              >
+                {m.editor_meta_set_today()}
+              </button>
+              {post.publishedAt && (
+                <button
+                  type="button"
+                  onClick={() => onPostChange({ publishedAt: null })}
+                  className="transition-colors hover:text-destructive"
+                >
+                  {m.editor_meta_clear_date()}
+                </button>
+              )}
+            </div>
           </div>
         </div>
 

@@ -6,6 +6,7 @@ import { PostEditor } from "@/features/posts/components/post-editor";
 import { PostEditorSkeleton } from "@/features/posts/components/post-editor/post-editor-skeleton";
 import type { PostEditorData } from "@/features/posts/components/post-editor/types";
 import { POSTS_KEYS, postByIdQuery } from "@/features/posts/queries";
+import { resolvePublishedAtForSave } from "@/features/posts/utils/date";
 import { setPostTagsFn } from "@/features/tags/api/tags.api";
 import {
   TAGS_KEYS,
@@ -78,10 +79,10 @@ function EditPost() {
   };
 
   const handleSave = async (data: PostEditorData) => {
-    const publishedAt =
-      data.status === "published" && !post.publishedAt
-        ? new Date()
-        : data.publishedAt;
+    const publishedAt = resolvePublishedAtForSave(
+      data.status,
+      data.publishedAt,
+    );
 
     // Parallelize updates
     const [updateResult] = await Promise.all([
