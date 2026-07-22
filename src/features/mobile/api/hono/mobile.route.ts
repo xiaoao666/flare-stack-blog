@@ -4,6 +4,11 @@ import { Hono } from "hono";
 import * as CommentService from "@/features/comments/comments.service";
 import * as ConfigService from "@/features/config/service/config.service";
 import * as FriendLinkService from "@/features/friend-links/friend-links.service";
+import {
+  ACCEPTED_IMAGE_TYPES,
+  MAX_FILE_SIZE,
+} from "@/features/media/media.schema";
+import * as MediaService from "@/features/media/service/media.service";
 import * as PostService from "@/features/posts/services/posts.service";
 import { getServiceContext } from "@/lib/hono/helper";
 import { baseMiddleware } from "@/lib/hono/middlewares";
@@ -203,6 +208,41 @@ app.get("/admin/posts/:id", async (c) => {
     id: Number(c.req.param("id")),
   });
   return post ? c.json(post) : c.json({ error: "POST_NOT_FOUND" }, 404);
+});
+
+app.get("/admin/media", async (c) => {
+  const result = await requireAdmin(c);
+  if ("response" in result) return result.response;
+  const items = await MediaService.getMediaList(serviceContext(c), {
+    cursor: c.req.query("cursor")
+      ? Number(c.req.query("cursor"))
+      : undefined,
+    limit: Math.min(Number(c.req.query("limit") ?? 50), 100),
+    search: c.req.query("search"),
+  });
+  return c.json(items);
+});
+
+app.post("/admin/media", async (c) => {
+  const authResult = await requireAdmin(c);
+  if ("response" in authResult) return authResult.response;
+
+  const formData = await c.req.formData();
+  const file = formData.get("image");
+  if (!(file instanceof File)) {
+    return c.json({ error: "IMAGE_REQUIRED" }, 400);
+  }
+  if (file.size > MAX_FILE_SIZE) {
+    return c.json({ error: "IMAGE_TOO_LARGE" }, 413);
+  }
+  if (!ACCEPTED_IMAGE_TYPES.includes(file.type)) {
+    return c.json({ error: "IMAGE_TYPE_NOT_SUPPORTED" }, 415);
+  }
+
+  const uploaded = await MediaService.upload(serviceContext(c), { file });
+  return uploaded.error
+    ? c.json({ error: uploaded.error.reason }, 500)
+    : c.json(uploaded.data, 201);
 });
 
 app.post("/admin/posts", async (c) => {
