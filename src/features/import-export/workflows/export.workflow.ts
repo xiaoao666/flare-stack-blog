@@ -18,6 +18,7 @@ import {
 } from "@/features/import-export/utils/markdown-serializer";
 import { buildZip } from "@/features/import-export/utils/zip";
 import { getFromR2 } from "@/features/media/data/media.storage";
+import { extractImageKey } from "@/features/media/utils/media.utils";
 import * as PostRepo from "@/features/posts/data/posts.data";
 import { extractAllImageKeys } from "@/features/posts/utils/content";
 import { getDb } from "@/lib/db";
@@ -85,6 +86,7 @@ export class ExportWorkflow extends WorkflowEntrypoint<
             title: post.title,
             slug: post.slug,
             summary: post.summary ?? undefined,
+            coverImageUrl: post.coverImageUrl ?? undefined,
             status: post.status,
             publishedAt: post.publishedAt?.toISOString(),
             createdAt: post.createdAt.toISOString(),
@@ -116,9 +118,14 @@ export class ExportWorkflow extends WorkflowEntrypoint<
             );
           }
 
-          // Download images from R2
-          if (post.contentJson) {
-            const imageKeys = extractAllImageKeys(post.contentJson);
+          // Download article and cover images from R2.
+          const imageKeys = new Set(
+            post.contentJson ? extractAllImageKeys(post.contentJson) : [],
+          );
+          const coverKey = extractImageKey(post.coverImageUrl ?? "");
+          if (coverKey) imageKeys.add(coverKey);
+
+          if (imageKeys.size > 0) {
             for (const key of imageKeys) {
               try {
                 const r2Object = await getFromR2(this.env, key);

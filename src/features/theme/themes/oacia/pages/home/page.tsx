@@ -29,7 +29,11 @@ export function HomePage({ posts, pinnedPosts }: HomePageProps) {
       <section className="oacia-intro">
         <div>
           <p className="oacia-kicker">WELCOME TO MY LITTLE UNIVERSE</p>
-          <h2>写下喜欢的事，<br /><em>也收藏闪闪发光的日常。</em></h2>
+          <h2>
+            写下喜欢的事，
+            <br />
+            <em>也收藏闪闪发光的日常。</em>
+          </h2>
           <p className="oacia-description">{siteConfig.description}</p>
         </div>
         <div className="oacia-socials" aria-label="社交链接">
@@ -64,8 +68,8 @@ export function HomePage({ posts, pinnedPosts }: HomePageProps) {
             <span>{String(pinned.length).padStart(2, "0")}</span>
           </div>
           <div>
-            {pinned.map((post, index) => (
-              <PostRow key={post.id} post={post} pinned index={index} />
+            {pinned.map((post) => (
+              <PostRow key={post.id} post={post} pinned />
             ))}
           </div>
         </section>
@@ -80,8 +84,8 @@ export function HomePage({ posts, pinnedPosts }: HomePageProps) {
           </Link>
         </div>
         <div>
-          {recent.map((post, index) => (
-            <PostRow key={post.id} post={post} index={index + pinned.length} />
+          {recent.map((post) => (
+            <PostRow key={post.id} post={post} />
           ))}
         </div>
       </section>

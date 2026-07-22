@@ -256,6 +256,7 @@ app.put("/admin/posts/:id", async (c) => {
     title?: string;
     slug?: string;
     summary?: string;
+    coverImageUrl?: string | null;
     contentJson?: JSONContent | null;
     readTimeInMinutes?: number;
     pinned?: boolean;
@@ -266,6 +267,7 @@ app.put("/admin/posts/:id", async (c) => {
       title: body.title,
       slug: body.slug,
       summary: body.summary,
+      coverImageUrl: body.coverImageUrl,
       contentJson: body.contentJson,
       readTimeInMinutes: body.readTimeInMinutes,
       pinnedAt:

@@ -4,6 +4,7 @@ type ArticleJsonLdInput = {
   post: {
     slug: string;
     summary?: string | null;
+    coverImageUrl?: string | null;
     title: string;
     publishedAt?: Date | string | null;
     updatedAt: Date | string;
@@ -47,6 +48,18 @@ export function canonicalLink(href: string) {
   } as const;
 }
 
+export function resolveAbsoluteImageUrl(
+  imageUrl: string | null | undefined,
+  pageUrl: string,
+) {
+  if (!imageUrl) return undefined;
+  try {
+    return new URL(imageUrl, pageUrl).toString();
+  } catch {
+    return imageUrl;
+  }
+}
+
 export function buildArticleJsonLd({
   authorName,
   canonicalHref,
@@ -70,6 +83,14 @@ export function buildArticleJsonLd({
 
   if (post.summary) {
     jsonLd.description = post.summary;
+  }
+
+  const coverImageUrl = resolveAbsoluteImageUrl(
+    post.coverImageUrl,
+    canonicalHref,
+  );
+  if (coverImageUrl) {
+    jsonLd.image = coverImageUrl;
   }
 
   if (post.publishedAt) {

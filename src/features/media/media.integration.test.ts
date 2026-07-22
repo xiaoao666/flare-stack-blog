@@ -275,6 +275,28 @@ describe("MediaService", () => {
       expect(linkedPosts).toHaveLength(1);
     });
 
+    it("should track a post cover as media usage", async () => {
+      const file = new File(["cover image"], "post-cover.png", {
+        type: "image/png",
+      });
+      const media = unwrap(await MediaService.upload(adminContext, { file }));
+      const { id: postId } = await PostService.createEmptyPost(adminContext);
+
+      await PostMediaRepo.syncPostMedia(
+        adminContext.db,
+        postId,
+        null,
+        `/images/${media.key}`,
+      );
+
+      expect(await MediaService.isMediaInUse(adminContext, media.key)).toBe(
+        true,
+      );
+      expect(
+        await MediaService.getLinkedPosts(adminContext, media.key),
+      ).toHaveLength(1);
+    });
+
     it("should return false for unused media", async () => {
       const file = new File(["unused"], "unused-image.png", {
         type: "image/png",

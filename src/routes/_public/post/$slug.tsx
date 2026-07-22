@@ -1,15 +1,16 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, notFound } from "@tanstack/react-router";
-import theme from "@/features/theme/runtime";
 import { useEffect } from "react";
 import { z } from "zod";
 import { siteConfigQuery, siteDomainQuery } from "@/features/config/queries";
 import { recordPageViewFn } from "@/features/pageview/api/pageview.api";
 import { postBySlugQuery, relatedPostsQuery } from "@/features/posts/queries";
+import theme from "@/features/theme/runtime";
 import {
   buildArticleJsonLd,
   buildCanonicalUrl,
   canonicalLink,
+  resolveAbsoluteImageUrl,
 } from "@/lib/seo";
 
 const searchSchema = z.object({
@@ -49,6 +50,10 @@ export const Route = createFileRoute("/_public/post/$slug")({
   head: ({ loaderData }) => {
     const post = loaderData?.post;
     const canonicalHref = loaderData?.canonicalHref ?? "";
+    const coverImageUrl = resolveAbsoluteImageUrl(
+      post?.coverImageUrl,
+      canonicalHref,
+    );
 
     return {
       meta: [
@@ -63,6 +68,13 @@ export const Route = createFileRoute("/_public/post/$slug")({
         { property: "og:description", content: post?.summary ?? "" },
         { property: "og:type", content: "article" },
         { property: "og:url", content: canonicalHref },
+        ...(coverImageUrl
+          ? [
+              { property: "og:image", content: coverImageUrl },
+              { name: "twitter:card", content: "summary_large_image" },
+              { name: "twitter:image", content: coverImageUrl },
+            ]
+          : []),
       ],
       links: [canonicalLink(canonicalHref)],
       scripts: post

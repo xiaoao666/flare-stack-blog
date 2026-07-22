@@ -116,6 +116,31 @@ describe("normalizeFrontmatter", () => {
     expect(result!.summary).toBe("An excerpt");
   });
 
+  it("should extract a post cover from common frontmatter aliases", () => {
+    expect(
+      normalizeFrontmatter({ ...base, cover: "/images/cover.webp" })
+        ?.coverImageUrl,
+    ).toBe("/images/cover.webp");
+    expect(
+      normalizeFrontmatter({ ...base, image: "/images/image.webp" })
+        ?.coverImageUrl,
+    ).toBe("/images/image.webp");
+    expect(
+      normalizeFrontmatter({ ...base, thumbnail: "/images/thumb.webp" })
+        ?.coverImageUrl,
+    ).toBe("/images/thumb.webp");
+  });
+
+  it("should prefer coverImageUrl over cover aliases", () => {
+    const result = normalizeFrontmatter({
+      ...base,
+      coverImageUrl: "/images/primary.webp",
+      cover: "/images/fallback.webp",
+    });
+
+    expect(result?.coverImageUrl).toBe("/images/primary.webp");
+  });
+
   it("should set status to draft when draft=true (Hugo)", () => {
     const result = normalizeFrontmatter({ ...base, draft: true });
     expect(result).not.toBeNull();

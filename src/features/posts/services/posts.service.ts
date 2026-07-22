@@ -26,10 +26,7 @@ import {
 } from "@/features/posts/schema/posts.schema";
 import { logPostAutoSnapshot } from "@/features/posts/services/post-auto-snapshot.logging";
 import * as PostAutoSnapshotService from "@/features/posts/services/post-auto-snapshot.service";
-import {
-  convertToPlainText,
-  slugify,
-} from "@/features/posts/utils/content";
+import { convertToPlainText, slugify } from "@/features/posts/utils/content";
 import { isFuturePublishDate } from "@/features/posts/utils/date";
 import { calculatePostHash } from "@/features/posts/utils/sync";
 import { generateTableOfContents } from "@/features/posts/utils/toc";
@@ -311,6 +308,7 @@ export async function findPostById(
       title: post.title,
       contentJson: post.contentJson,
       summary: post.summary,
+      coverImageUrl: post.coverImageUrl,
       tagIds: post.tags.map((t) => t.id),
       slug: post.slug,
       publishedAt: post.publishedAt,
@@ -332,9 +330,17 @@ export async function updatePost(
     return err({ reason: "POST_NOT_FOUND" });
   }
 
-  if (data.data.contentJson !== undefined) {
+  if (
+    data.data.contentJson !== undefined ||
+    data.data.coverImageUrl !== undefined
+  ) {
     context.executionCtx.waitUntil(
-      syncPostMedia(context.db, updatedPost.id, data.data.contentJson),
+      syncPostMedia(
+        context.db,
+        updatedPost.id,
+        updatedPost.contentJson,
+        updatedPost.coverImageUrl,
+      ),
     );
   }
 
@@ -409,6 +415,7 @@ export async function startPostProcessWorkflow(
         title: post.title,
         contentJson: post.contentJson,
         summary: post.summary,
+        coverImageUrl: post.coverImageUrl,
         tagIds: post.tags.map((tag) => tag.id),
         slug: post.slug,
         publishedAt: post.publishedAt,
@@ -423,6 +430,7 @@ export async function startPostProcessWorkflow(
         snapshotJson: {
           title: post.title,
           summary: post.summary,
+          coverImageUrl: post.coverImageUrl,
           slug: post.slug,
           status: post.status,
           publishedAt: post.publishedAt ? post.publishedAt.toISOString() : null,

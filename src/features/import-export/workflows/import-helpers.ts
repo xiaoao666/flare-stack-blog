@@ -18,6 +18,7 @@ import {
 } from "@/features/import-export/utils/zip";
 import * as MediaRepo from "@/features/media/data/media.data";
 import {
+  extractImageKey,
   generateKey,
   getContentTypeFromKey,
 } from "@/features/media/utils/media.utils";
@@ -103,6 +104,7 @@ export async function importSinglePost(
   // 1. Parse content
   let contentJson: JSONContent | null = null;
   let metadata: Record<string, unknown> = {};
+  let nativeImageRewriteMap = new Map<string, string>();
 
   if (mode === "native") {
     const rawJson = readJsonFile<JSONContent>(
@@ -195,11 +197,21 @@ export async function importSinglePost(
   }
 
   // 3. Upload images and rewrite paths (native mode only — markdown mode handles images pre-conversion)
-  if (contentJson && mode === "native") {
+  if (mode === "native" && (contentJson || normalized.coverImageUrl)) {
     const imageResult = await uploadImages(env, zipFiles, entry, locale);
     warnings.push(...imageResult.warnings);
-    if (imageResult.rewriteMap.size > 0) {
+    nativeImageRewriteMap = imageResult.rewriteMap;
+    if (contentJson && imageResult.rewriteMap.size > 0) {
       contentJson = rewriteImagePaths(contentJson, imageResult.rewriteMap);
+    }
+  }
+
+  let coverImageUrl = normalized.coverImageUrl ?? null;
+  const archivedCoverKey = extractImageKey(coverImageUrl ?? "");
+  if (archivedCoverKey) {
+    const rewrittenCoverKey = nativeImageRewriteMap.get(archivedCoverKey);
+    if (rewrittenCoverKey) {
+      coverImageUrl = `/images/${rewrittenCoverKey}`;
     }
   }
 
@@ -235,6 +247,7 @@ export async function importSinglePost(
     title,
     slug,
     summary: normalized.summary ?? null,
+    coverImageUrl,
     contentJson,
     status: normalized.status === "draft" ? "draft" : "published",
     readTimeInMinutes: normalized.readTimeInMinutes,
@@ -253,8 +266,8 @@ export async function importSinglePost(
   }
 
   // 9. Sync post-media relationships
-  if (contentJson) {
-    await syncPostMedia(db, post.id, contentJson);
+  if (contentJson || coverImageUrl) {
+    await syncPostMedia(db, post.id, contentJson, coverImageUrl);
   }
 
   return { title: post.title, slug: post.slug, warnings };

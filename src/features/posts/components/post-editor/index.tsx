@@ -23,6 +23,7 @@ export function PostEditor({ initialData, onSave }: PostEditorProps) {
   const [post, setPost] = useState<PostEditorData>(() => ({
     title: initialData.title,
     summary: initialData.summary,
+    coverImageUrl: initialData.coverImageUrl,
     slug: initialData.slug,
     status: initialData.status,
     readTimeInMinutes: initialData.readTimeInMinutes,
@@ -114,6 +115,7 @@ export function PostEditor({ initialData, onSave }: PostEditorProps) {
       snapshot: {
         title: string;
         summary: string | null;
+        coverImageUrl?: string | null;
         slug: string;
         status: PostEditorData["status"];
         publishedAt: string | null;
@@ -126,6 +128,10 @@ export function PostEditor({ initialData, onSave }: PostEditorProps) {
       const restoredPost: PostEditorData = {
         title: snapshot.title,
         summary: snapshot.summary ?? "",
+        coverImageUrl:
+          snapshot.coverImageUrl === undefined
+            ? post.coverImageUrl
+            : snapshot.coverImageUrl,
         slug: snapshot.slug,
         status: snapshot.status,
         readTimeInMinutes: snapshot.readTimeInMinutes,
@@ -143,13 +149,14 @@ export function PostEditor({ initialData, onSave }: PostEditorProps) {
       setEditorRenderKey(`editor:${initialData.id}:${Date.now()}`);
       markSaved(restoredPost);
     },
-    [initialData.id, markSaved, post.hasPublicCache],
+    [initialData.id, markSaved, post.coverImageUrl, post.hasPublicCache],
   );
 
   const currentSnapshot = useMemo<PostRevisionSnapshot>(
     () => ({
       title: post.title,
       summary: post.summary.trim() || null,
+      coverImageUrl: post.coverImageUrl,
       slug: post.slug,
       status: post.status,
       publishedAt: post.publishedAt ? post.publishedAt.toISOString() : null,
@@ -159,6 +166,7 @@ export function PostEditor({ initialData, onSave }: PostEditorProps) {
     }),
     [
       post.contentJson,
+      post.coverImageUrl,
       post.publishedAt,
       post.readTimeInMinutes,
       post.slug,

@@ -1,6 +1,7 @@
 import type { JSONContent } from "@tiptap/react";
 import { eq, inArray } from "drizzle-orm";
 import type { BatchItem } from "drizzle-orm/batch";
+import { extractImageKey } from "@/features/media/utils/media.utils";
 import { extractAllImageKeys } from "@/features/posts/utils/content";
 import { MediaTable, PostMediaTable, PostsTable } from "@/lib/db/schema";
 
@@ -8,9 +9,13 @@ export async function syncPostMedia(
   db: DB,
   postId: number,
   contentJson: JSONContent | null,
+  coverImageUrl?: string | null,
 ) {
   // 1. 获取文章中使用的图片 key
-  const usedKeys = extractAllImageKeys(contentJson);
+  const usedKeySet = new Set(extractAllImageKeys(contentJson));
+  const coverKey = extractImageKey(coverImageUrl ?? "");
+  if (coverKey) usedKeySet.add(coverKey);
+  const usedKeys = [...usedKeySet];
 
   // 2. 准备sql语句
   const batchQueries: Array<BatchItem<"sqlite">> = [];

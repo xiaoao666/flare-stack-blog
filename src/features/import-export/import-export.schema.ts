@@ -70,6 +70,7 @@ export const PostFrontmatterSchema = z.object({
   title: z.string().default(""),
   slug: z.string().default(""),
   summary: z.string().optional().nullable(),
+  coverImageUrl: z.string().optional().nullable(),
   status: z.enum(POST_STATUSES).default("published"),
   publishedAt: z.string().optional().nullable(),
   createdAt: z.string().optional().nullable(),

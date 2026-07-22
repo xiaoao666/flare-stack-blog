@@ -100,6 +100,7 @@ describe("Posts Integration", () => {
         data: {
           title: "Public Post",
           slug: "public-post",
+          coverImageUrl: "/images/public-post-cover.webp",
           status: "published",
           publishedAt: new Date(),
         },
@@ -115,6 +116,7 @@ describe("Posts Integration", () => {
       expect(post).not.toBeNull();
       expect(post?.id).toBe(id);
       expect(post?.title).toBe("Public Post");
+      expect(post?.coverImageUrl).toBe("/images/public-post-cover.webp");
     });
 
     it("should backfill publicContentJson for legacy published posts on read", async () => {
@@ -883,6 +885,7 @@ describe("Posts Integration", () => {
         data: {
           title: "Versioned Post",
           summary: "Snapshot summary",
+          coverImageUrl: "/images/versioned-cover.webp",
           slug: "versioned-post",
           readTimeInMinutes: 3,
           contentJson: {
@@ -912,6 +915,7 @@ describe("Posts Integration", () => {
       expect(revision.revision?.snapshotJson).toEqual({
         title: "Versioned Post",
         summary: "Snapshot summary",
+        coverImageUrl: "/images/versioned-cover.webp",
         slug: "versioned-post",
         status: "draft",
         publishedAt: null,
@@ -1016,6 +1020,7 @@ describe("Posts Integration", () => {
         data: {
           title: "Updated Title",
           summary: "Updated Summary",
+          coverImageUrl: "/images/updated-cover.webp",
           slug: "updated-title",
           contentJson: {
             type: "doc",
@@ -1044,6 +1049,7 @@ describe("Posts Integration", () => {
       expect(restoreResult.restored).toBe(true);
       expect(restoreResult.post.title).toBe("Original Title");
       expect(restoreResult.post.summary).toBe("Original Summary");
+      expect(restoreResult.post.coverImageUrl).toBeNull();
       expect(restoreResult.post.slug).toBe("original-title");
       expect(restoreResult.post.tags.map((tag) => tag.id)).toEqual([
         originalTag.id,
@@ -1107,6 +1113,49 @@ describe("Posts Integration", () => {
       );
       expect(revisions).toHaveLength(1);
       expect(revisions[0]?.id).toBe(revision.revision?.id);
+    });
+
+    it("preserves the current cover when restoring a legacy revision", async () => {
+      const { id } = await PostService.createEmptyPost(adminContext);
+      await updatePost({
+        id,
+        data: {
+          title: "Legacy Cover Snapshot",
+          slug: "legacy-cover-snapshot",
+          coverImageUrl: "/images/current-cover.webp",
+        },
+      });
+
+      const [legacyRevision] = await adminContext.db
+        .insert(PostRevisionsTable)
+        .values({
+          postId: id,
+          reason: "auto",
+          snapshotHash: "legacy-cover-hash",
+          snapshotJson: {
+            title: "Legacy Cover Snapshot",
+            summary: "",
+            slug: "legacy-cover-snapshot",
+            status: "draft",
+            publishedAt: null,
+            readTimeInMinutes: 1,
+            contentJson: null,
+            tagIds: [],
+          },
+        })
+        .returning();
+
+      const restoreResult = unwrap(
+        await PostRevisionService.restorePostRevision(adminContext, {
+          postId: id,
+          revisionId: legacyRevision.id,
+        }),
+      );
+
+      expect(restoreResult.restored).toBe(false);
+      expect(restoreResult.post.coverImageUrl).toBe(
+        "/images/current-cover.webp",
+      );
     });
 
     it("deletes multiple revisions for the current post only", async () => {
@@ -1205,6 +1254,7 @@ describe("Posts Integration", () => {
         data: {
           title: "Published Revision",
           summary: "Before workflow",
+          coverImageUrl: "/images/published-cover.webp",
           slug: "published-revision",
           status: "published",
           publishedAt,
@@ -1250,6 +1300,7 @@ describe("Posts Integration", () => {
       expect(revision?.snapshotJson).toEqual({
         title: "Published Revision",
         summary: "Before workflow",
+        coverImageUrl: "/images/published-cover.webp",
         slug: "published-revision",
         status: "published",
         publishedAt: publishedAt.toISOString(),

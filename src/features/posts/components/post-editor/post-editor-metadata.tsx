@@ -6,6 +6,7 @@ import { TagSelector } from "@/features/tags/components/tag-selector";
 import { POST_STATUSES } from "@/lib/db/schema";
 import { toLocalDateString } from "@/lib/utils";
 import { m } from "@/paraglide/messages";
+import { PostCoverField } from "./post-cover-field";
 import type { PostEditorData } from "./types";
 
 const STATUS_LABELS: Record<PostEditorData["status"], () => string> = {
@@ -51,6 +52,14 @@ export function PostEditorMetadata({
       </div>
 
       <div className="mb-16 grid grid-cols-1 gap-x-12 gap-y-8 border-t border-border/30 pt-8 md:grid-cols-3">
+        <div className="md:col-span-3">
+          <PostCoverField
+            title={post.title}
+            value={post.coverImageUrl}
+            onChange={(coverImageUrl) => onPostChange({ coverImageUrl })}
+          />
+        </div>
+
         <div className="space-y-3">
           <label className="text-[9px] font-mono uppercase tracking-widest text-muted-foreground">
             {m.editor_meta_status()}

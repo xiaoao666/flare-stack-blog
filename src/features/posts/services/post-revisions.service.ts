@@ -29,6 +29,7 @@ function toRevisionSnapshot(
   return {
     title: post.title,
     summary: post.summary,
+    coverImageUrl: post.coverImageUrl,
     slug: post.slug,
     status: post.status,
     publishedAt: post.publishedAt ? post.publishedAt.toISOString() : null,
@@ -43,6 +44,7 @@ async function hashSnapshot(snapshot: PostRevisionSnapshot) {
     title: snapshot.title,
     contentJson: snapshot.contentJson,
     summary: snapshot.summary,
+    coverImageUrl: snapshot.coverImageUrl,
     tagIds: snapshot.tagIds,
     slug: snapshot.slug,
     publishedAt: snapshot.publishedAt,
@@ -204,7 +206,10 @@ export async function restorePostRevision(
   if (!parsedSnapshot.success) {
     return err({ reason: "POST_REVISION_INVALID_SNAPSHOT" });
   }
-  const targetSnapshot = parsedSnapshot.data;
+  const targetSnapshot =
+    parsedSnapshot.data.coverImageUrl === undefined
+      ? { ...parsedSnapshot.data, coverImageUrl: post.coverImageUrl }
+      : parsedSnapshot.data;
 
   const currentSnapshot = toRevisionSnapshot(post);
   const [currentHash, targetHash] = await Promise.all([
@@ -237,7 +242,12 @@ export async function restorePostRevision(
 
   if (targetSnapshot.contentJson !== undefined) {
     context.executionCtx.waitUntil(
-      syncPostMedia(context.db, restoredPost.id, targetSnapshot.contentJson),
+      syncPostMedia(
+        context.db,
+        restoredPost.id,
+        targetSnapshot.contentJson,
+        restoredPost.coverImageUrl,
+      ),
     );
   }
 

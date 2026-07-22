@@ -17,6 +17,7 @@ export const PostsTable = sqliteTable(
     id,
     title: text().notNull(),
     summary: text(),
+    coverImageUrl: text("cover_image_url"),
     readTimeInMinutes: integer("read_time_in_minutes").default(1).notNull(),
     slug: text().notNull().unique(),
 

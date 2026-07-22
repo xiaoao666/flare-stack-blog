@@ -35,6 +35,7 @@ export function useAutoSave({
   const lastSavedSnapshot = useRef<{
     title: string;
     summary: string;
+    coverImageUrl: string | null;
     slug: string;
     status: string;
     readTimeInMinutes: number;
@@ -50,6 +51,7 @@ export function useAutoSave({
   const toComparable = (p: PostEditorData) => ({
     title: p.title,
     summary: p.summary,
+    coverImageUrl: p.coverImageUrl,
     slug: p.slug,
     status: p.status,
     readTimeInMinutes: p.readTimeInMinutes,
@@ -65,6 +67,7 @@ export function useAutoSave({
     return (
       prev.title !== curr.title ||
       prev.summary !== curr.summary ||
+      prev.coverImageUrl !== curr.coverImageUrl ||
       prev.slug !== curr.slug ||
       prev.status !== curr.status ||
       prev.readTimeInMinutes !== curr.readTimeInMinutes ||

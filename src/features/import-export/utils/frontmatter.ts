@@ -53,6 +53,12 @@ export function normalizeFrontmatter(
     mapped.summary = summarySource;
   }
 
+  const coverSource =
+    data.coverImageUrl ?? data.cover ?? data.image ?? data.thumbnail;
+  if (typeof coverSource === "string") {
+    mapped.coverImageUrl = coverSource;
+  }
+
   // status
   if (data.draft === true) {
     mapped.status = "draft";
