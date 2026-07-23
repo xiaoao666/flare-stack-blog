@@ -7,7 +7,6 @@ import {
 } from "@/features/config/utils/social-platforms";
 import type { HomePageProps } from "@/features/theme/contract/pages";
 import { m } from "@/paraglide/messages";
-import { HeroCarousel } from "../../components/hero-carousel";
 import { PostRow } from "../../components/post-row";
 
 export function HomePage({ posts, pinnedPosts }: HomePageProps) {
@@ -21,11 +20,6 @@ export function HomePage({ posts, pinnedPosts }: HomePageProps) {
 
   return (
     <div className="oacia-home">
-      <HeroCarousel
-        title={siteConfig.title}
-        images={siteConfig.theme.oacia.carouselImages}
-      />
-
       <section className="oacia-intro">
         <div>
           <p className="oacia-kicker">WELCOME TO MY LITTLE UNIVERSE</p>

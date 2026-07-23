@@ -3,7 +3,6 @@ import { cn } from "@/lib/utils";
 export function PostsPageSkeleton() {
   return (
     <div className="oacia-archive-page" aria-hidden="true">
-      <div className="oacia-archive-hero oacia-skeleton-pulse" />
       <section className="oacia-archive-shell">
         <div className="oacia-tag-rail oacia-skeleton-tags">
           {Array.from({ length: 6 }).map((_, index) => (

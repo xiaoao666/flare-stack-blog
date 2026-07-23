@@ -1,14 +1,11 @@
 export function PostPageSkeleton() {
   return (
     <div className="oacia-article-page" aria-hidden="true">
-      <header className="oacia-article-hero oacia-skeleton-pulse">
-        <div className="oacia-article-hero-copy oacia-skeleton-hero-copy">
-          <span />
+      <article className="oacia-article-shell">
+        <div className="oacia-article-toolbar oacia-skeleton-toolbar">
           <span />
           <span />
         </div>
-      </header>
-      <article className="oacia-article-shell">
         <div className="oacia-article-summary oacia-skeleton-lines">
           <span />
           <span />

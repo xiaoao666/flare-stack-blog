@@ -10,7 +10,6 @@ export function HomePageSkeleton() {
           <Skeleton className="h-5 w-[34rem] max-w-full" />
         </div>
       </section>
-      <Skeleton className="oacia-carousel min-h-72" />
       <section className="oacia-post-section space-y-8">
         <Skeleton className="h-8 w-32" />
         {Array.from({ length: 5 }).map((_, index) => (

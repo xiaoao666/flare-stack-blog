@@ -20,10 +20,13 @@ export const Route = createFileRoute("/_public/unsubscribe")({
   ssr: false,
   validateSearch: unsubscribeSearchSchema,
   component: UnsubscribePage,
-  head: () => ({
+  loader: () => ({
+    title: m.unsubscribe_title(),
+  }),
+  head: ({ loaderData }) => ({
     meta: [
       {
-        title: m.unsubscribe_title(),
+        title: loaderData?.title,
       },
     ],
   }),

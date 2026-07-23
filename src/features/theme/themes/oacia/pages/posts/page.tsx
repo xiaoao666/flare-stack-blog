@@ -1,11 +1,9 @@
-import { useRouteContext } from "@tanstack/react-router";
 import { BookOpen, Loader2 } from "lucide-react";
 import { useEffect, useRef } from "react";
 import type { PostsPageProps } from "@/features/theme/contract/pages";
 import { cn } from "@/lib/utils";
 import { m } from "@/paraglide/messages";
 import { ArchivePostCard } from "../../components/archive-post-card";
-import { getOaciaPostCover } from "../../components/post-cover";
 
 export function PostsPage({
   posts,
@@ -16,9 +14,7 @@ export function PostsPage({
   isFetchingNextPage,
   fetchNextPage,
 }: PostsPageProps) {
-  const { siteConfig } = useRouteContext({ from: "__root__" });
   const observerRef = useRef<HTMLDivElement>(null);
-  const leadPost = posts[0];
 
   useEffect(() => {
     const target = observerRef.current;
@@ -38,24 +34,6 @@ export function PostsPage({
 
   return (
     <div className="oacia-archive-page">
-      <header className="oacia-archive-hero">
-        <img
-          src={
-            leadPost
-              ? getOaciaPostCover(leadPost)
-              : "/images/oacia/hero-sakura.jpg"
-          }
-          alt=""
-          fetchPriority="high"
-        />
-        <div className="oacia-archive-hero-shade" />
-        <div className="oacia-archive-hero-copy">
-          <h1>{m.posts_title()}</h1>
-          <p>{siteConfig.description}</p>
-          {selectedTag && <span>#{selectedTag}</span>}
-        </div>
-      </header>
-
       <section className="oacia-archive-shell">
         <nav className="oacia-tag-rail" aria-label={m.posts_tags_filter()}>
           <button
